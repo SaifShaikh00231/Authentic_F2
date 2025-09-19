@@ -17,7 +17,6 @@ const Navbar = () => {
     setShowMobileSearch((prev) => !prev);
   };
 
-  // ✅ Load user on mount + listen for login/logout events
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
@@ -27,7 +26,7 @@ const Navbar = () => {
       if (updatedUser) {
         setUser(JSON.parse(updatedUser));
       } else {
-        setUser(null); // logout
+        setUser(null);
       }
     };
 
@@ -40,7 +39,6 @@ const Navbar = () => {
     };
   }, []);
 
-  // Resize handler for mobile search toggle
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 576 && showMobileSearch) {
@@ -52,7 +50,6 @@ const Navbar = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, [showMobileSearch]);
 
-  // Debounced search
   useEffect(() => {
     if (!searchTerm.trim()) {
       setSuggestions([]);
@@ -73,13 +70,6 @@ const Navbar = () => {
     return () => clearTimeout(delayDebounce);
   }, [searchTerm]);
 
-  const handleSelectSweet = (sweet) => {
-    setShowSuggestions(false);
-    setSearchTerm("");
-    navigate(`/sweet/${sweet._id}`);
-  };
-
-  // ✅ Logout
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
@@ -87,7 +77,6 @@ const Navbar = () => {
     navigate("/login");
   };
 
-  // Navbar height tracking
   useLayoutEffect(() => {
     const findNav = () =>
       navRef.current ||
@@ -142,11 +131,18 @@ const Navbar = () => {
         className="navbar fixed-top shadow-sm custom-navbar px-3 py-2"
       >
         <div className="navbar-container">
-          <a href="/" className="navbar-logo">
+          {/* Logo click uses navigate */}
+          <a
+            href="/"
+            className="navbar-logo"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/");
+            }}
+          >
             <img src={logo} alt="Bombay Sweet Shop" />
           </a>
 
-          {/* Search */}
           <div className="navbar-search position-relative">
             <div className="input-group">
               <input
@@ -172,7 +168,7 @@ const Navbar = () => {
                   <div
                     key={sweet._id}
                     className="suggestion-item"
-                    onClick={() => handleSelectSweet(sweet)}
+                    onClick={(e) => e.preventDefault()} // Do nothing on click
                   >
                     <img
                       src={
@@ -192,7 +188,6 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Desktop account dropdown */}
           <div className="navbar-account-large">
             <Dropdown align="end">
               <Dropdown.Toggle
@@ -229,7 +224,6 @@ const Navbar = () => {
             </Dropdown>
           </div>
 
-          {/* Mobile account dropdown */}
           <div className="navbar-icons-small">
             <button
               onClick={toggleSearch}
@@ -280,7 +274,6 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile search */}
         {showMobileSearch && (
           <form
             className="mobile-search-form"
@@ -354,7 +347,7 @@ const Navbar = () => {
           display: flex;
           align-items: center;
           padding: 8px 10px;
-          cursor: pointer;
+          cursor: default; /* not clickable */
         }
         .suggestion-item img {
           width: 40px;
