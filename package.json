@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx vite build",
-    "serve": "serve -s dist",
-    "preview": "vite preview",
-    "lint": "eslint .",
-    "test": "vitest run",
-    "test:watch": "vitest"
+  "build": "node ./node_modules/vite/bin/vite.js build",
+  "serve": "serve -s dist",
+  "preview": "vite preview",
+  "lint": "eslint .",
+  "test": "vitest run",
+  "test:watch": "vitest"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.0.1",
