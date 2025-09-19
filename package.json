@@ -4,13 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "npx vite build",
-    "serve": "serve -s dist",
-    "preview": "vite preview",
-    "lint": "eslint .",
-    "test": "vitest run",
-    "test:watch": "vitest"
+   "dev": "vite",
+  "build": "npm exec vite build",
+  "serve": "serve -s dist",
+  "preview": "vite preview",
+  "lint": "eslint .",
+  "test": "vitest run",
+  "test:watch": "vitest"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.0.1",
