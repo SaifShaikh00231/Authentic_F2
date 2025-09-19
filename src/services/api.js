@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: `${process.env.REACT_APP_BACKEND_URL}/api`, // use .env variable
+  baseURL: `${import.meta.env.VITE_BACKEND_URL}/api`, // use .env variable
 });
 
 // ✅ Get all sweets
