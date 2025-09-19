@@ -1,8 +1,7 @@
-// src/services/api.js
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api", // backend base url
+  baseURL: `${process.env.REACT_APP_BACKEND_URL}/api`, // use .env variable
 });
 
 // ✅ Get all sweets
