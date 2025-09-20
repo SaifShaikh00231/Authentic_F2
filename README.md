@@ -15,6 +15,8 @@ This project provides a user-friendly interface for browsing, purchasing, and ma
 - Responsive UI with modern design
 
 ---
+#### Both Frontend and Backend is deployed on Render Platform 
+Website URL : - https://authenticsweets-saif.onrender.com/
 
 ## Setup Instructions
 
@@ -26,7 +28,7 @@ npm install
 Start the backend
 
 npm run dev
-Website URL : - https://authenticsweets-saif.onrender.com/
+
 
 ## Home Page 
 <img width="1895" height="997" alt="Authentic-home" src="https://github.com/user-attachments/assets/31024369-9d36-4e38-b4bc-af5bf2fff3b9" />
