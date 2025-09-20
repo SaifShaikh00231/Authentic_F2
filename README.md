@@ -18,6 +18,10 @@ This project provides a user-friendly interface for browsing, purchasing, and ma
 #### Both Frontend and Backend is deployed on Render Platform 
 Website URL : - https://authenticsweets-saif.onrender.com/
 
+### Admin Role Login credentials use this :
+## email : saif@example.com
+## password  Password123
+
 ## Setup Instructions
 
 Install dependencies
