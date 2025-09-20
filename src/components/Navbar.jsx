@@ -274,31 +274,47 @@ const Navbar = () => {
           </div>
         </div>
 
-        {showMobileSearch && (
-          <form
-            className="mobile-search-form"
-            role="search"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <div className="input-group">
-              <input
-                type="search"
-                className="form-control"
-                placeholder="Search for sweets"
-                aria-label="Search"
-                autoFocus
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <button className="btn btn-light" type="submit" aria-label="Search">
-                <i
-                  className="fa-solid fa-magnifying-glass"
-                  style={{ color: "#002244" }}
-                ></i>
-              </button>
+{showMobileSearch && (
+  <form
+    className="mobile-search-form"
+    role="search"
+    onSubmit={(e) => e.preventDefault()}
+  >
+    <div className="input-group">
+      <input
+        type="search"
+        className="form-control"
+        placeholder="Search for sweets"
+        aria-label="Search"
+        autoFocus
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => searchTerm && setShowSuggestions(true)}
+      />
+      <button className="btn btn-light" type="submit" aria-label="Search">
+        <i className="fa-solid fa-magnifying-glass" style={{ color: "#002244" }}></i>
+      </button>
+    </div>
+
+    {showSuggestions && suggestions.length > 0 && (
+      <div className="search-suggestions">
+        {suggestions.map((sweet) => (
+          <div key={sweet._id} className="suggestion-item">
+            <img
+              src={sweet.imageUrls?.[0] || "https://via.placeholder.com/40"}
+              alt={sweet.name}
+            />
+            <div>
+              <div className="sweet-name">{sweet.name}</div>
+              <div className="sweet-price">₹{sweet.price}</div>
             </div>
-          </form>
-        )}
+          </div>
+        ))}
+      </div>
+    )}
+  </form>
+)}
+
       </nav>
 
       <style jsx>{`

@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Card, Button, Form, InputGroup, Modal } from "react-bootstrap";
-import { motion } from "framer-motion";
+import {
+  Row,
+  Col,
+  Card,
+  Button,
+  Form,
+  InputGroup,
+  Modal,
+} from "react-bootstrap";
+import { motion, AnimatePresence } from "framer-motion";
 import { getAllSweets, purchaseSweet } from "../services/api";
 
 const Home = () => {
@@ -9,12 +17,19 @@ const Home = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [address, setAddress] = useState("");
+  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [maxPrice, setMaxPrice] = useState(1000);
+  const [showFilter, setShowFilter] = useState(false); // toggle filter panel
 
   useEffect(() => {
     const fetchSweets = async () => {
       try {
         const sweets = await getAllSweets();
         setProducts(sweets);
+
+        const highestPrice = Math.max(...sweets.map((s) => s.price), 1000);
+        setMaxPrice(highestPrice);
+        setPriceRange([0, highestPrice]);
 
         const initialQuantities = {};
         sweets.forEach((p) => {
@@ -66,7 +81,11 @@ const Home = () => {
         return;
       }
 
-      await purchaseSweet(selectedProduct._id, { quantity: qty, address }, token);
+      await purchaseSweet(
+        selectedProduct._id,
+        { quantity: qty, address },
+        token
+      );
 
       alert("✅ Your order has been booked!");
       setShowModal(false);
@@ -76,16 +95,122 @@ const Home = () => {
     }
   };
 
-  // Framer Motion animations
   const cardVariant = {
     hidden: { opacity: 0, y: 40 },
     show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
   };
 
+  const filteredProducts = products.filter(
+    (p) => p.price >= priceRange[0] && p.price <= priceRange[1]
+  );
+
   return (
     <>
+      {/* Filter Toggle */}
+{/* Filter Button + Active Filter Badge */}
+<div className="d-flex align-items-center my-3 mx-3 gap-2">
+  {/* Filter Button */}
+  <Button
+    variant="outline-warning"
+    className="rounded-pill px-3 d-flex align-items-center gap-2 shadow-sm"
+    onClick={() => setShowFilter(!showFilter)}
+  >
+    <i className="fa-solid fa-filter"></i>
+    <span className="fw-semibold">Filter</span>
+  </Button>
+
+  {/* Active Filter Badge */}
+  {(priceRange[0] !== 0 || priceRange[1] !== maxPrice) && (
+    <div className="d-flex align-items-center bg-warning text-dark px-3 py-1 rounded-pill shadow-sm gap-2">
+      <span className="fw-semibold">
+        ₹{priceRange[0]} - ₹{priceRange[1]}
+      </span>
+      <Button
+        size="sm"
+        variant="light"
+        className="rounded-circle d-flex align-items-center justify-content-center"
+        style={{ width: "20px", height: "20px", fontSize: "1rem" }}
+        onClick={() => setPriceRange([0, maxPrice])}
+      >
+        ×
+      </Button>
+    </div>
+  )}
+</div>
+
+
+      {/* Price Filter Panel */}
+      <AnimatePresence>
+        {showFilter && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-4"
+          >
+            <Card className="shadow-sm border-0 rounded-4 p-1">
+              <Card.Body>
+                <Form>
+                  <Row className="align-items-center">
+                    <Col xs={12} md={4}>
+                      <Form.Label className="fw-semibold">
+                        💰 Price Range
+                      </Form.Label>
+                    </Col>
+                    <Col xs={12} md={4}>
+                      <Form.Range
+                        min={0}
+                        max={maxPrice}
+                        value={priceRange[1]}
+                        onChange={(e) =>
+                          setPriceRange([priceRange[0], +e.target.value])
+                        }
+                        className="my-3 price-slider"
+                      />
+
+                      <InputGroup className="w-100">
+                        <div className="d-flex align-items-center gap-2 w-100">
+                          <Form.Control
+                            type="number"
+                            min="0"
+                            max={priceRange[1]}
+                            value={priceRange[0]}
+                            onChange={(e) =>
+                              setPriceRange([+e.target.value, priceRange[1]])
+                            }
+                            className="shadow-sm flex-grow-1"
+                          />
+                          <span className="mx-1 fw-semibold">To</span>
+                          <Form.Control
+                            type="number"
+                            min={priceRange[0]}
+                            max={maxPrice}
+                            value={priceRange[1]}
+                            onChange={(e) =>
+                              setPriceRange([priceRange[0], +e.target.value])
+                            }
+                            className="shadow-sm flex-grow-1"
+                          />
+                        </div>
+                      </InputGroup>
+
+                      <div className="d-flex justify-content-between small text-muted">
+                        <span>₹{priceRange[0]}</span>
+                        <span>₹{priceRange[1]}</span>
+                      </div>
+                    </Col>
+                  </Row>
+                </Form>
+              </Card.Body>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Products */}
       <Row className="g-4 mb-5">
-        {products.map((product, index) => (
+        {filteredProducts.map((product, index) => (
           <Col md={6} lg={4} key={product._id}>
             <motion.div
               variants={cardVariant}
@@ -103,7 +228,11 @@ const Home = () => {
                 <motion.div
                   className="floating-sweet"
                   animate={{ y: [0, -12, 0] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                 >
                   🍬
                 </motion.div>
@@ -119,7 +248,11 @@ const Home = () => {
                       className="sweet-image"
                       loading="lazy"
                       animate={{ y: [0, -6, 0] }}
-                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
                     />
                   ) : (
                     <div className="no-image">No Image</div>
@@ -140,7 +273,10 @@ const Home = () => {
                   <Form>
                     <Row className="mb-3">
                       <Col xs={12}>
-                        <Form.Select defaultValue="200g" className="shadow-sm rounded-pill">
+                        <Form.Select
+                          defaultValue="200g"
+                          className="shadow-sm rounded-pill"
+                        >
                           <option value="200g">200g</option>
                           <option value="500g">500g</option>
                           <option value="1kg">1kg</option>
@@ -197,12 +333,19 @@ const Home = () => {
             </motion.div>
           </Col>
         ))}
+        {filteredProducts.length === 0 && (
+          <p className="text-center text-muted mt-4">
+            No products in this price range.
+          </p>
+        )}
       </Row>
 
       {/* Purchase Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title className="sweet-modal-title">Confirm Purchase</Modal.Title>
+          <Modal.Title className="sweet-modal-title">
+            Confirm Purchase
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedProduct && (
@@ -214,7 +357,8 @@ const Home = () => {
                 <strong>Price:</strong> ₹{selectedProduct.price}
               </p>
               <p>
-                <strong>Quantity:</strong> {quantities[selectedProduct._id] || 1}
+                <strong>Quantity:</strong>{" "}
+                {quantities[selectedProduct._id] || 1}
               </p>
               <Form.Group>
                 <Form.Label>Delivery Address</Form.Label>
@@ -308,6 +452,45 @@ const Home = () => {
         }
         .sweet-modal-title {
           font-family: "Playfair Display SC", serif;
+        }
+
+        .price-slider {
+          accent-color: #ffc107; /* modern browsers */
+          height: 6px;
+          border-radius: 4px;
+          background: linear-gradient(
+            to right,
+            #ffc107 0%,
+            #ffc107 ${(priceRange[1] / maxPrice) * 100}%,
+            #e9ecef ${(priceRange[1] / maxPrice) * 100}%,
+            #e9ecef 100%
+          );
+        }
+
+        .price-slider::-webkit-slider-thumb {
+          background: #ffc107;
+          border: none;
+          height: 18px;
+          width: 18px;
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+          transition: transform 0.2s ease;
+        }
+
+        .price-slider::-webkit-slider-thumb:hover {
+          transform: scale(1.2);
+        }
+
+        .price-slider::-moz-range-thumb {
+          background: #ffc107;
+          border: none;
+          height: 18px;
+          width: 18px;
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+          transition: transform 0.2s ease;
         }
       `}</style>
     </>

@@ -66,7 +66,7 @@ const HeroSection = () => {
         textAlign: "center",
         color: "#2e2b3d",
         width: "100%",
-        marginTop: "80px",
+        marginTop: "100px",
         position: "relative",
         overflow: "hidden",
       }}
