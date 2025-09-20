@@ -20,7 +20,7 @@ Website URL : - https://authenticsweets-saif.onrender.com/
 
 ### Admin Role Login credentials use this :
 ## email : saif@example.com
-## password  Password123
+## password : Password123
 
 ## Setup Instructions
 
